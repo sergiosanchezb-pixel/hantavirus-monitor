@@ -2,15 +2,18 @@
 
 import { Article, StatsData } from '@/types';
 import { ICON_MAP, LINK_MAP } from '@/lib/data';
+import DateFilter from './DateFilter';
 
 const safeIconMap = ICON_MAP as Record<string, string>;
 const safeLinkMap = LINK_MAP as Record<string, string>;
 
 interface NewsFeedProps {
   data: StatsData | null;
+  onDateFilterChange?: (days: number) => void;
+  currentDateFilter?: number;
 }
 
-export default function NewsFeed({ data }: NewsFeedProps) {
+export default function NewsFeed({ data, onDateFilterChange, currentDateFilter = 7 }: NewsFeedProps) {
   const classifyItem = (item: Article): 'critical' | 'high' | 'moderate' => {
     const text = (item.title + ' ' + item.description).toLowerCase();
     if (text.includes('death') || text.includes('fatal') || text.includes('muerte') || text.includes('died')) {
@@ -25,13 +28,24 @@ export default function NewsFeed({ data }: NewsFeedProps) {
 
   const formatDate = (dateStr: string) => {
     try {
-      return new Date(dateStr).toLocaleDateString('es-ES', {
+      const date = new Date(dateStr);
+      
+      // Verificar si la fecha es válida
+      if (isNaN(date.getTime())) {
+        return '–';
+      }
+      
+      // Formato personalizado para evitar problemas de localización
+      const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
-      }).toUpperCase();
+        minute: '2-digit',
+        hour12: false
+      };
+      
+      return date.toLocaleDateString('es-ES', options).toUpperCase();
     } catch {
       return '–';
     }
@@ -49,7 +63,7 @@ export default function NewsFeed({ data }: NewsFeedProps) {
 
     return (
       <div className="feed-stats">
-        <div className="feed-stat">✓ FUENTES ACTIVAS: {ok}/{total}</div>
+        <div className="feed-stat">[OK] FUENTES ACTIVAS: {ok}/{total}</div>
         <div className="feed-stat">█ ALERTAS: {alerts}</div>
         {cache}
       </div>
@@ -57,7 +71,16 @@ export default function NewsFeed({ data }: NewsFeedProps) {
   };
 
   const renderNews = () => {
-    const articles = data?.articles || [];
+    let articles = data?.articles || [];
+    
+    // Aplicar filtro por días si está configurado
+    if (currentDateFilter > 0) {
+      const now = Date.now();
+      articles = articles.filter(article => {
+        const articleAge = (now - new Date(article.pubDate).getTime()) / (1000 * 60 * 60 * 24);
+        return articleAge <= currentDateFilter;
+      });
+    }
     
     if (!articles.length) {
       return (
@@ -99,22 +122,23 @@ export default function NewsFeed({ data }: NewsFeedProps) {
     const list = sources.length ? sources : [
       { name: 'OMS', status: 'loading' as const },
       { name: 'CDC', status: 'loading' as const },
-      { name: 'ProMED', status: 'loading' as const }
+      { name: 'ProMED', status: 'loading' as const },
+      { name: 'NewsAPI', status: 'loading' as const }
     ];
 
     return list.map((source, index) => {
       let statusHtml;
       if (source.status === 'loading') {
-        statusHtml = <span className="src-status src-loading">⟳ CONSULTANDO...</span>;
+        statusHtml = <span className="src-status src-loading">[CARGANDO] CONSULTANDO...</span>;
       } else if (source.status === 'ok') {
-        statusHtml = <span className="src-status src-ok">✓ ACTIVA · {source.count} artículos</span>;
+        statusHtml = <span className="src-status src-ok">[OK] ACTIVA · {source.count} artículos</span>;
       } else {
-        statusHtml = <span className="src-status src-err">✗ {source.error || 'Error de conexión'}</span>;
+        statusHtml = <span className="src-status src-err">[ERROR] {source.error || 'Error de conexión'}</span>;
       }
 
       return (
         <div key={index} className="source-card">
-          <div className="source-icon">{safeIconMap[source.name] || '📡'}</div>
+          <div className="source-icon">{safeIconMap[source.name] || '[RSS]'}</div>
           <div className="source-name">█ {source.name}</div>
           <div className="source-desc">→ Feed RSS oficial · Filtrado por hantavirus</div>
           {statusHtml}<br />
@@ -134,11 +158,20 @@ export default function NewsFeed({ data }: NewsFeedProps) {
   return (
     <div className="section">
       <h2 className="section-title">█ FEED EN VIVO — FUENTES OFICIALES</h2>
-      <p className="section-sub">[OMS · CDC · ProMED · FILTRADO POR HANTAVIRUS · TIEMPO REAL]</p>
+      <p className="section-sub">[OMS · CDC · ProMED · NewsAPI · FILTRADO POR HANTAVIRUS · TIEMPO REAL]</p>
+
+      {onDateFilterChange && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <DateFilter 
+            onFilterChange={onDateFilterChange} 
+            currentFilter={currentDateFilter} 
+          />
+        </div>
+      )}
 
       <div className="info-box">
         <strong>ℹ️ Origen de datos:</strong> Este feed consulta en tiempo real el backend propio de HantaMonitor
-        que hace scraping de OMS (Disease Outbreak News), CDC (HAN + MMWR) y ProMED Mail.
+        que hace scraping de OMS (Disease Outbreak News), CDC (HAN + MMWR), ProMED Mail y NewsAPI.org.
         Los artículos son filtrados automáticamente por palabras clave de hantavirus y actualizados cada 30 minutos en el servidor.
       </div>
 

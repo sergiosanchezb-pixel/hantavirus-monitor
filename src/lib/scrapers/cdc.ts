@@ -31,15 +31,34 @@ export async function cdcScraper() {
     });
     const $ = cheerio.load(data);
     const pageArts: any[] = [];
+    
+    // Buscar fecha de última actualización en la página
+    let lastUpdated = new Date('2024-01-01'); // Fecha por defecto antigua
+    $('date, time, .date, .updated, .last-updated, [datetime]').each((_, el) => {
+      const dateText = $(el).text() || $(el).attr('datetime') || '';
+      const parsed = new Date(dateText);
+      if (!isNaN(parsed.getTime()) && parsed > lastUpdated) {
+        lastUpdated = parsed;
+      }
+    });
+    
+    // Si no encontramos fecha, usar una fecha base para contenido informativo
+    if (lastUpdated.getFullYear() === 2024) {
+      lastUpdated = new Date('2024-05-01'); // Fecha base para contenido CDC
+    }
+    
     $('p, li, h2, h3').each((_, el) => {
       const text = $(el).text().replace(/\s+/g, ' ').trim();
       if (text.length > 30 && text.length < 600) pageArts.push({
-        source: 'CDC-PAGE', title: text.substring(0, 100), description: text,
-        link: 'https://www.cdc.gov/hantavirus/index.html', pubDate: new Date().toISOString()
+        source: 'CDC-PAGE', 
+        title: text.substring(0, 100), 
+        description: text,
+        link: 'https://www.cdc.gov/hantavirus/index.html', 
+        pubDate: lastUpdated.toISOString()
       });
     });
     articles.push(...pageArts.slice(0, 10));
-    console.log(`[CDC PAGE] total: ${articles.length}`);
+    console.log(`[CDC PAGE] total: ${articles.length}, fecha: ${lastUpdated.toISOString()}`);
   } catch (e: any) { console.warn('[CDC PAGE]', e.message); }
 
   // 3. RSS MMWR

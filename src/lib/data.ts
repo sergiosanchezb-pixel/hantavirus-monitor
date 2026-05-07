@@ -80,13 +80,15 @@ export const COLOR_MAP = {
 };
 
 export const ICON_MAP = {
-  'OMS': '🏥',
-  'CDC': '🇺🇸',
-  'ProMED': '🌐'
+  'OMS': '[OMS]',
+  'CDC': '[CDC]',
+  'ProMED': '[PROMED]',
+  'NewsAPI': '[NEWS]'
 };
 
 export const LINK_MAP = {
   'OMS': 'https://www.who.int/emergencies/disease-outbreak-news',
   'CDC': 'https://emergency.cdc.gov/han/',
-  'ProMED': 'https://promedmail.org'
+  'ProMED': 'https://promedmail.org',
+  'NewsAPI': 'https://newsapi.org'
 };

@@ -1,6 +1,8 @@
 import { whoScraper } from './who';
 import { cdcScraper } from './cdc';
 import { promedScraper } from './promed';
+import { robustNewsScrapersService } from './robustNewsScrapers';
+import { newsApiScraper } from './newsapi';
 
 const KEYWORDS = [
   'hantavirus','hanta virus','andes virus','virus andes',
@@ -38,8 +40,10 @@ function extractNumbers(text = '') {
 
 export async function runAllScrapers() {
   const scrapers = [
-    { fn: whoScraper, name: 'OMS' },
+    { fn: robustNewsScrapersService, name: 'RobustNews' },
     { fn: cdcScraper, name: 'CDC' },
+    { fn: newsApiScraper, name: 'NewsAPI' },
+    { fn: whoScraper, name: 'OMS' },
     { fn: promedScraper, name: 'ProMED' }
   ];
 

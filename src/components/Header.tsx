@@ -24,7 +24,7 @@ export default function Header({ data, onUpdate, loading }: HeaderProps) {
 
   return (
     <div className="header">
-      <h1>🌍 HANTAMONITOR</h1>
+      <h1>HANTAMONITOR</h1>
       <p>
         <span className="live-dot"></span>
         SALA DE OPERACIONES GLOBAL &nbsp;•&nbsp; FUENTES OFICIALES EN TIEMPO REAL
@@ -36,7 +36,7 @@ export default function Header({ data, onUpdate, loading }: HeaderProps) {
           disabled={loading}
           className="btn-update"
         >
-          🔄 ACTUALIZAR FUENTES EN VIVO
+          ACTUALIZAR FUENTES EN VIVO
         </button>
         
         {loading && (
