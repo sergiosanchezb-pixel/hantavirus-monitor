@@ -5,19 +5,37 @@ import { useState } from 'react';
 interface DateFilterProps {
   onFilterChange: (days: number) => void;
   currentFilter: number;
+  locale?: 'es' | 'en';
 }
 
-const FILTER_OPTIONS = [
+const FILTER_OPTIONS_ES = [
   { label: 'Últimas 24h', days: 1 },
   { label: 'Últimos 3 días', days: 3 },
   { label: 'Última semana', days: 7 },
   { label: 'Últimas 2 semanas', days: 14 },
   { label: 'Último mes', days: 30 },
-  { label: 'Todos', days: 0 }
+  { label: 'Todos', days: 0 },
 ];
 
-export default function DateFilter({ onFilterChange, currentFilter }: DateFilterProps) {
+const FILTER_OPTIONS_EN = [
+  { label: 'Last 24h', days: 1 },
+  { label: 'Last 3 days', days: 3 },
+  { label: 'Last week', days: 7 },
+  { label: 'Last 2 weeks', days: 14 },
+  { label: 'Last month', days: 30 },
+  { label: 'All', days: 0 },
+];
+
+export default function DateFilter({ onFilterChange, currentFilter, locale = 'es' }: DateFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const options = locale === 'en' ? FILTER_OPTIONS_EN : FILTER_OPTIONS_ES;
+  const filterLabel = locale === 'en' ? 'FILTER' : 'FILTRAR';
+  const activeLabel = locale === 'en' ? '[ACTIVE]' : '[ACTIVO]';
+  const defaultLabel = locale === 'en' ? 'Last week' : 'Última semana';
+  const periodLabel = locale === 'en' ? 'PERIOD' : 'PERIODO';
+  const daysLabel = locale === 'en' ? 'days' : 'días';
+  const allLabel = locale === 'en' ? 'All articles' : 'Todos los artículos';
+  const lastLabel = locale === 'en' ? 'Last' : 'Últimos';
 
   const handleFilterSelect = (days: number) => {
     onFilterChange(days);
@@ -25,8 +43,8 @@ export default function DateFilter({ onFilterChange, currentFilter }: DateFilter
   };
 
   const getCurrentLabel = () => {
-    const option = FILTER_OPTIONS.find(opt => opt.days === currentFilter);
-    return option ? option.label : 'Última semana';
+    const option = options.find(opt => opt.days === currentFilter);
+    return option ? option.label : defaultLabel;
   };
 
   return (
@@ -36,30 +54,30 @@ export default function DateFilter({ onFilterChange, currentFilter }: DateFilter
           className="date-filter-button"
           onClick={() => setIsOpen(!isOpen)}
         >
-          FILTRAR: {getCurrentLabel()} ▼
+          {filterLabel}: {getCurrentLabel()} ▼
         </button>
-        
+
         {isOpen && (
           <div className="date-filter-menu">
-            {FILTER_OPTIONS.map((option) => (
+            {options.map((option) => (
               <button
                 key={option.days}
                 className={`date-filter-option ${option.days === currentFilter ? 'active' : ''}`}
                 onClick={() => handleFilterSelect(option.days)}
               >
                 {option.label}
-                {option.days === currentFilter && ' [ACTIVO]'}
+                {option.days === currentFilter && ` ${activeLabel}`}
               </button>
             ))}
           </div>
         )}
       </div>
-      
+
       <div className="date-filter-info">
         {currentFilter > 0 ? (
-          <span>PERIODO: Últimos {currentFilter} días</span>
+          <span>{periodLabel}: {lastLabel} {currentFilter} {daysLabel}</span>
         ) : (
-          <span>PERIODO: Todos los artículos</span>
+          <span>{periodLabel}: {allLabel}</span>
         )}
       </div>
     </div>

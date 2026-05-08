@@ -1,5 +1,43 @@
 import { Location } from '@/types';
 
+export const BASE_LOCATIONS_EN: Location[] = [
+  {
+    name: 'M/V Hondius (Cape Verde)',
+    lat: 14.93, lng: -23.63, cases: 7, deaths: 2, possible: 150, level: 'critical',
+    notes: 'EPICENTER · 150 quarantine · Deaths: 11 Apr / 2 May'
+  },
+  {
+    name: 'South Africa',
+    lat: -24.53, lng: 25.26, cases: 2, deaths: 1, possible: 82, level: 'critical',
+    notes: 'British woman deceased · Doctor in ICU · 82 contacts'
+  },
+  {
+    name: 'Switzerland',
+    lat: 46.82, lng: 8.23, cases: 1, deaths: 0, possible: 1, level: 'high',
+    notes: 'ICU positive Zurich · Disembarked 21 Apr'
+  },
+  {
+    name: 'Netherlands',
+    lat: 52.13, lng: 5.29, cases: 4, deaths: 0, possible: 0, level: 'high',
+    notes: 'Evacuated to Amsterdam'
+  },
+  {
+    name: 'Spain (Canary Islands)',
+    lat: 28.23, lng: -16.23, cases: 0, deaths: 0, possible: 140, level: 'high',
+    notes: '14 Spaniards · Gómez Ulla Hospital'
+  },
+  {
+    name: 'United Kingdom',
+    lat: 55.38, lng: -3.44, cases: 2, deaths: 0, possible: 0, level: 'moderate',
+    notes: 'UKHSA tracking contacts'
+  },
+  {
+    name: 'Argentina (Ushuaia)',
+    lat: -54.80, lng: -68.30, cases: 0, deaths: 0, possible: 0, level: 'moderate',
+    notes: 'Origin point · 1 April'
+  }
+];
+
 export const BASE_LOCATIONS: Location[] = [
   { 
     name: 'M/V Hondius (Cabo Verde)', 

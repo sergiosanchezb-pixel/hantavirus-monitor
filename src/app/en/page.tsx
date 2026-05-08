@@ -7,14 +7,14 @@ import NewsFeed from '@/components/NewsFeed';
 import DataTable from '@/components/DataTable';
 import Footer from '@/components/Footer';
 import { StatsData } from '@/types';
-import { BASE_LOCATIONS } from '@/lib/data';
+import { BASE_LOCATIONS_EN } from '@/lib/data';
 import { extractLocationsFromArticles, mergeLocationData } from '@/lib/locationExtractor';
 
-export default function Home() { 
+export default function HomeEN() {
   const [data, setData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [mapLocations, setMapLocations] = useState(BASE_LOCATIONS);
-  const [dateFilter, setDateFilter] = useState(7); // Por defecto: última semana
+  const [mapLocations, setMapLocations] = useState(BASE_LOCATIONS_EN);
+  const [dateFilter, setDateFilter] = useState(7);
 
   const fetchData = async (force = false) => {
     setLoading(true);
@@ -23,11 +23,10 @@ export default function Home() {
       const response = await fetch(url);
       const result = await response.json();
       setData(result);
-      
-      // Extraer ubicaciones de los artículos y actualizar el mapa
+
       if (result.articles && result.articles.length > 0) {
         const articleLocations = extractLocationsFromArticles(result.articles, dateFilter);
-        const mergedLocations = mergeLocationData(BASE_LOCATIONS, articleLocations);
+        const mergedLocations = mergeLocationData(BASE_LOCATIONS_EN, articleLocations);
         setMapLocations(mergedLocations);
       }
     } catch (error) {
@@ -47,32 +46,31 @@ export default function Home() {
 
   const handleDateFilterChange = (days: number) => {
     setDateFilter(days);
-    // Actualizar el mapa con el nuevo filtro sin recargar datos
     if (data && data.articles && data.articles.length > 0) {
       const articleLocations = extractLocationsFromArticles(data.articles, days);
-      const mergedLocations = mergeLocationData(BASE_LOCATIONS, articleLocations);
+      const mergedLocations = mergeLocationData(BASE_LOCATIONS_EN, articleLocations);
       setMapLocations(mergedLocations);
     }
   };
 
-  const serverTime = data?.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('es-ES') : undefined;
+  const serverTime = data?.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('en-US') : undefined;
 
   return (
     <div className="container">
-      <Header data={data} onUpdate={handleUpdate} loading={loading} locale="es" />
+      <Header data={data} onUpdate={handleUpdate} loading={loading} locale="en" />
 
       <div className="section">
-        <Map locations={mapLocations} locale="es" />
+        <Map locations={mapLocations} locale="en" />
       </div>
 
       <NewsFeed
         data={data}
         onDateFilterChange={handleDateFilterChange}
         currentDateFilter={dateFilter}
-        locale="es"
+        locale="en"
       />
-      <DataTable locations={mapLocations} locale="es" />
-      <Footer serverTime={serverTime} locale="es" />
+      <DataTable locations={mapLocations} locale="en" />
+      <Footer serverTime={serverTime} locale="en" />
     </div>
   );
 }

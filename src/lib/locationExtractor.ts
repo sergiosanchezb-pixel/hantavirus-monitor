@@ -282,7 +282,7 @@ export function mergeLocationData(baseLocations: Location[], articleLocations: L
       existing.level = existing.level === 'critical' || articleLoc.level === 'critical' ? 'critical' :
                       (existing.level === 'high' || articleLoc.level === 'high' ? 'high' : 'moderate');
       if (articleLoc.cases > 0 || articleLoc.deaths > 0) {
-        existing.notes += ` | [NUEVO] ${articleLoc.notes}`;
+        existing.notes += ` | [NEW] ${articleLoc.notes}`;
       }
     } else {
       // Agregar nueva ubicación

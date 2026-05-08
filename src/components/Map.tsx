@@ -13,9 +13,40 @@ const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ss
 
 interface MapProps {
   locations: Location[];
+  locale?: 'es' | 'en';
 }
 
-export default function Map({ locations }: MapProps) {
+const mapTx = {
+  es: {
+    title: '█ MAPA TÁCTICO GLOBAL',
+    sub: '[DISTRIBUCIÓN EPIDEMIOLÓGICA • ZOOM INTERACTIVO • DATOS VERIFICADOS]',
+    positive: 'Positivos',
+    deaths: 'Muertes',
+    possible: 'Posibles',
+    critical: 'CRÍTICO',
+    criticalDesc: '2+ positivos · Muertes confirmadas',
+    high: 'ALTO RIESGO',
+    highDesc: '1+ positivos · Propagación secundaria',
+    moderate: 'MODERADO',
+    moderateDesc: 'Casos vinculados · Bajo riesgo',
+  },
+  en: {
+    title: '█ GLOBAL TACTICAL MAP',
+    sub: '[EPIDEMIOLOGICAL DISTRIBUTION • INTERACTIVE ZOOM • VERIFIED DATA]',
+    positive: 'Positive',
+    deaths: 'Deaths',
+    possible: 'Possible',
+    critical: 'CRITICAL',
+    criticalDesc: '2+ positive · Confirmed deaths',
+    high: 'HIGH RISK',
+    highDesc: '1+ positive · Secondary spread',
+    moderate: 'MODERATE',
+    moderateDesc: 'Linked cases · Low risk',
+  },
+};
+
+export default function Map({ locations, locale = 'es' }: MapProps) {
+  const tx = mapTx[locale];
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -36,8 +67,8 @@ export default function Map({ locations }: MapProps) {
 
   return (
     <>
-      <h2 className="section-title">█ MAPA TÁCTICO GLOBAL</h2>
-      <p className="section-sub">[DISTRIBUCIÓN EPIDEMIOLÓGICA • ZOOM INTERACTIVO • DATOS VERIFICADOS]</p>
+      <h2 className="section-title">{tx.title}</h2>
+      <p className="section-sub">{tx.sub}</p>
       
       <div id="map">
         {typeof window !== 'undefined' && (
@@ -74,9 +105,9 @@ export default function Map({ locations }: MapProps) {
                       █ {location.name}
                     </div>
                     <div style={{ fontSize: '11px', color: '#333', lineHeight: '2' }}>
-                      <b>Positivos:</b> {location.cases}<br />
-                      <b>Muertes:</b> {location.deaths}<br />
-                      <b>Posibles:</b> {location.possible}<br />
+                      <b>{tx.positive}:</b> {location.cases}<br />
+                      <b>{tx.deaths}:</b> {location.deaths}<br />
+                      <b>{tx.possible}:</b> {location.possible}<br />
                       <hr style={{ margin: '6px 0', borderColor: '#ddd' }} />
                       <span style={{ color: '#555' }}>{location.notes}</span>
                     </div>
@@ -92,22 +123,22 @@ export default function Map({ locations }: MapProps) {
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#ff0055' }}></div>
           <div className="legend-text">
-            <h3>CRÍTICO</h3>
-            <p>2+ positivos · Muertes confirmadas</p>
+            <h3>{tx.critical}</h3>
+            <p>{tx.criticalDesc}</p>
           </div>
         </div>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#ff9500' }}></div>
           <div className="legend-text">
-            <h3>ALTO RIESGO</h3>
-            <p>1+ positivos · Propagación secundaria</p>
+            <h3>{tx.high}</h3>
+            <p>{tx.highDesc}</p>
           </div>
         </div>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#00ff88' }}></div>
           <div className="legend-text">
-            <h3>MODERADO</h3>
-            <p>Casos vinculados · Bajo riesgo</p>
+            <h3>{tx.moderate}</h3>
+            <p>{tx.moderateDesc}</p>
           </div>
         </div>
       </div>

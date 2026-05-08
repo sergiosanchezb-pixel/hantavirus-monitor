@@ -5,9 +5,17 @@ import { COLOR_MAP } from '@/lib/data';
 
 interface DataTableProps {
   locations: Location[];
+  locale?: 'es' | 'en';
 }
 
-export default function DataTable({ locations }: DataTableProps) {
+export default function DataTable({ locations, locale = 'es' }: DataTableProps) {
+  const title = locale === 'en' ? '█ DATA MATRIX — ACTIVE LOCATIONS' : '█ MATRIZ DE DATOS — UBICACIONES ACTIVAS';
+  const sub = locale === 'en'
+    ? '[VERIFIED WITH OFFICIAL REPORTS · CONTINUOUS UPDATES]'
+    : '[BASE VERIFICADA CON REPORTES OFICIALES · ACTUALIZACIÓN CONTINUA]';
+  const cols = locale === 'en'
+    ? { location: 'Location', positive: 'Positive', deaths: 'Deaths', possible: 'Possible', level: 'Level', notes: 'Notes' }
+    : { location: 'Ubicación', positive: 'Positivos', deaths: 'Muertes', possible: 'Posibles', level: 'Nivel', notes: 'Notas' };
   const getBadgeClass = (level: string) => {
     switch (level) {
       case 'critical': return 'bg-accent/20 text-accent border-accent';
@@ -28,19 +36,19 @@ export default function DataTable({ locations }: DataTableProps) {
 
   return (
     <div className="section">
-      <h2 className="section-title">█ MATRIZ DE DATOS — UBICACIONES ACTIVAS</h2>
-      <p className="section-sub">[BASE VERIFICADA CON REPORTES OFICIALES · ACTUALIZACIÓN CONTINUA]</p>
+      <h2 className="section-title">{title}</h2>
+      <p className="section-sub">{sub}</p>
 
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Ubicación</th>
-              <th>Positivos</th>
-              <th>Muertes</th>
-              <th>Posibles</th>
-              <th>Nivel</th>
-              <th>Notas</th>
+              <th>{cols.location}</th>
+              <th>{cols.positive}</th>
+              <th>{cols.deaths}</th>
+              <th>{cols.possible}</th>
+              <th>{cols.level}</th>
+              <th>{cols.notes}</th>
             </tr>
           </thead>
           <tbody id="table-body">
